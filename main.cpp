@@ -18,6 +18,7 @@ public:
 
 // Forward declaration
 bool registerUser();
+bool loginUser(string &currentUser);
 
 int main()
 {
@@ -39,8 +40,16 @@ int main()
     switch (choice)
     {
     case 1:
-      cout << "\n[ Login module coming soon ]\n";
+    {
+      string currentUser;
+
+      if (loginUser(currentUser))
+        cout << "Welcome " << currentUser << "!\n";
+      else
+        cout << "Invalid username or password.\n";
+
       break;
+    }
 
     case 2:
       if (registerUser())
@@ -104,7 +113,15 @@ bool registerUser()
 
   // 5. Append new user to accounts.txt
   ofstream out("data/accounts.txt", ios::app);
-  out << username << "," << password << endl;
+
+  if (!out)
+  {
+    cout << "Unable to create account database.\n";
+    return false;
+  }
+  User newUser(username, password);
+
+  out << newUser.username << "," << newUser.password << endl;
   out.close();
 
   // 6. Create an empty vault file for this user
@@ -113,4 +130,48 @@ bool registerUser()
 
   // 7. Return true
   return true;
+};
+
+bool loginUser(string &currentUser)
+{
+  string username, password;
+
+  cout << "\n--- Login ---\n";
+  cout << "Username: ";
+  cin >> username;
+
+  cout << "Password: ";
+  cin >> password;
+
+  ifstream file("data/accounts.txt");
+
+  if (!file)
+  {
+    cout << "No accounts found.\n";
+    return false;
+  }
+
+  string line;
+
+  while (getline(file, line))
+  {
+    size_t pos = line.find(',');
+
+    if (pos == string::npos)
+      continue;
+
+    string existingUser = line.substr(0, pos);
+    string existingPass = line.substr(pos + 1);
+
+    if (existingUser == username &&
+        existingPass == password)
+    {
+      currentUser = existingUser;
+      file.close();
+      return true;
+    }
+  }
+
+  file.close();
+  return false;
 }
