@@ -16,10 +16,28 @@ public:
   }
 };
 
+class PasswordEntry
+{
+public:
+  string platform;
+  string email;
+  string password;
+
+  PasswordEntry(string p, string e, string pass)
+  {
+    platform = p;
+    email = e;
+    password = pass;
+  }
+};
+
 // Forward declaration
 bool registerUser();
 bool loginUser(string &currentUser);
 void vaultMenu(string currentUser);
+void passwordMenu(string currentUser);
+void addPassword(string currentUser);
+void viewPasswords(string currentUser);
 
 int main()
 {
@@ -201,7 +219,7 @@ void vaultMenu(string currentUser)
     switch (choice)
     {
     case 1:
-      cout << "\n[ Password Manager coming soon ]\n";
+      passwordMenu(currentUser);
       break;
 
     case 2:
@@ -220,4 +238,102 @@ void vaultMenu(string currentUser)
       cout << "\nInvalid choice!\n";
     }
   }
-}
+};
+
+void passwordMenu(string currentUser)
+{
+  int choice;
+
+  while (true)
+  {
+    cout << "\n------ Password Manager ------\n";
+    cout << "1. Add Password\n";
+    cout << "2. View Passwords\n";
+    cout << "3. Back\n";
+    cout << "Choose: ";
+
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+      addPassword(currentUser);
+      break;
+
+    case 2:
+      viewPasswords(currentUser);
+      break;
+
+    case 3:
+      return;
+
+    default:
+      cout << "Invalid choice!\n";
+    }
+  }
+};
+
+void addPassword(string currentUser)
+{
+  string platform, email, password;
+
+  cout << "\nPlatform: ";
+  cin >> ws;
+  getline(cin, platform);
+
+  cout << "Email: ";
+  getline(cin, email);
+
+  cout << "Password: ";
+  getline(cin, password);
+
+  PasswordEntry entry(platform, email, password);
+
+  ofstream file("data/" + currentUser + ".vault", ios::app);
+
+  if (!file)
+  {
+    cout << "Unable to open vault.\n";
+    return;
+  }
+
+  file << entry.platform << ","
+       << entry.email << ","
+       << entry.password << endl;
+
+  file.close();
+
+  cout << "\nPassword saved successfully!\n";
+};
+
+void viewPasswords(string currentUser)
+{
+  ifstream file("data/" + currentUser + ".vault");
+
+  if (!file)
+  {
+    cout << "Vault not found.\n";
+    return;
+  }
+
+  string line;
+
+  cout << "\n======= Saved Passwords =======\n";
+
+  while (getline(file, line))
+  {
+    size_t p1 = line.find(',');
+    size_t p2 = line.find(',', p1 + 1);
+
+    string platform = line.substr(0, p1);
+    string email = line.substr(p1 + 1, p2 - p1 - 1);
+    string password = line.substr(p2 + 1);
+
+    cout << "Platform : " << platform << endl;
+    cout << "Email    : " << email << endl;
+    cout << "Password : " << password << endl;
+    cout << "-----------------------------\n";
+  }
+
+  file.close();
+};
