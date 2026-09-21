@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std;
 
 class User
@@ -31,6 +32,32 @@ public:
   }
 };
 
+vector<PasswordEntry> loadVault(string currentUser)
+{
+  vector<PasswordEntry> entries;
+
+  ifstream file("data/" + currentUser + ".vault");
+
+  string line;
+
+  while (getline(file, line))
+  {
+    size_t p1 = line.find(',');
+    size_t p2 = line.find(',', p1 + 1);
+
+    if (p1 == string::npos || p2 == string::npos)
+      continue;
+
+    entries.push_back(
+        PasswordEntry(
+            line.substr(0, p1),
+            line.substr(p1 + 1, p2 - p1 - 1),
+            line.substr(p2 + 1)));
+  }
+
+  return entries;
+}
+
 // Forward declaration
 bool registerUser();
 bool loginUser(string &currentUser);
@@ -38,6 +65,8 @@ void vaultMenu(string currentUser);
 void passwordMenu(string currentUser);
 void addPassword(string currentUser);
 void viewPasswords(string currentUser);
+void searchPassword(string currentUser);
+void deletePassword(string currentUser);
 
 int main()
 {
@@ -249,7 +278,9 @@ void passwordMenu(string currentUser)
     cout << "\n------ Password Manager ------\n";
     cout << "1. Add Password\n";
     cout << "2. View Passwords\n";
-    cout << "3. Back\n";
+    cout << "3. Search Password\n";
+    cout << "4. Delete Password\n";
+    cout << "5. Back\n";
     cout << "Choose: ";
 
     cin >> choice;
@@ -259,14 +290,17 @@ void passwordMenu(string currentUser)
     case 1:
       addPassword(currentUser);
       break;
-
     case 2:
       viewPasswords(currentUser);
       break;
-
     case 3:
+      searchPassword(currentUser);
+      break;
+    case 4:
+      deletePassword(currentUser);
+      break;
+    case 5:
       return;
-
     default:
       cout << "Invalid choice!\n";
     }
@@ -336,4 +370,72 @@ void viewPasswords(string currentUser)
   }
 
   file.close();
+};
+
+void searchPassword(string currentUser)
+{
+  vector<PasswordEntry> entries = loadVault(currentUser);
+
+  string platform;
+
+  cout << "\nSearch platform: ";
+  cin >> ws;
+  getline(cin, platform);
+
+  bool found = false;
+
+  for (auto entry : entries)
+  {
+    if (entry.platform == platform)
+    {
+      cout << "\nPlatform : " << entry.platform << endl;
+      cout << "Email    : " << entry.email << endl;
+      cout << "Password : " << entry.password << endl;
+
+      found = true;
+    }
+  }
+
+  if (!found)
+    cout << "No password found.\n";
+};
+
+void deletePassword(string currentUser)
+{
+  vector<PasswordEntry> entries = loadVault(currentUser);
+
+  string platform;
+
+  cout << "\nEnter platform to delete: ";
+  cin >> ws;
+  getline(cin, platform);
+
+  vector<PasswordEntry> updated;
+
+  bool deleted = false;
+
+  for (auto entry : entries)
+  {
+    if (entry.platform == platform && !deleted)
+    {
+      deleted = true;
+      continue;
+    }
+
+    updated.push_back(entry);
+  }
+
+  ofstream file("data/" + currentUser + ".vault");
+
+  for (auto entry : updated)
+  {
+    file << entry.platform << ","
+         << entry.email << ","
+         << entry.password << endl;
+  }
+
+  if (deleted)
+    cout << "Password deleted successfully!\n";
+  else
+    cout << "Platform not found.\n";
 };
