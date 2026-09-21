@@ -19,6 +19,7 @@ public:
 // Forward declaration
 bool registerUser();
 bool loginUser(string &currentUser);
+void vaultMenu(string currentUser);
 
 int main()
 {
@@ -44,13 +45,17 @@ int main()
       string currentUser;
 
       if (loginUser(currentUser))
-        cout << "Welcome " << currentUser << "!\n";
+      {
+        cout << "\nWelcome " << currentUser << "!\n";
+        vaultMenu(currentUser);
+      }
       else
-        cout << "Invalid username or password.\n";
+      {
+        cout << "\nInvalid username or password.\n";
+      }
 
       break;
     }
-
     case 2:
       if (registerUser())
         cout << "\n[ Registration successful! ]\n";
@@ -174,4 +179,45 @@ bool loginUser(string &currentUser)
 
   file.close();
   return false;
+};
+
+void vaultMenu(string currentUser)
+{
+  int choice;
+
+  while (true)
+  {
+    cout << "\n=================================\n";
+    cout << "      " << currentUser << "'s Vault\n";
+    cout << "=================================\n";
+    cout << "1. Password Manager\n";
+    cout << "2. Secure Notes\n";
+    cout << "3. API Keys\n";
+    cout << "4. Logout\n";
+    cout << "Choose: ";
+
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+      cout << "\n[ Password Manager coming soon ]\n";
+      break;
+
+    case 2:
+      cout << "\n[ Secure Notes coming soon ]\n";
+      break;
+
+    case 3:
+      cout << "\n[ API Keys coming soon ]\n";
+      break;
+
+    case 4:
+      cout << "\nLogged out successfully.\n";
+      return;
+
+    default:
+      cout << "\nInvalid choice!\n";
+    }
+  }
 }
