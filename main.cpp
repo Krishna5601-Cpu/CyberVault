@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "utils/Crypto.h"
 using namespace std;
 
 class User
@@ -50,9 +51,9 @@ vector<PasswordEntry> loadVault(string currentUser)
 
     entries.push_back(
         PasswordEntry(
-            line.substr(0, p1),
-            line.substr(p1 + 1, p2 - p1 - 1),
-            line.substr(p2 + 1)));
+            Crypto::decrypt(line.substr(0, p1)),
+            Crypto::decrypt(line.substr(p1 + 1, p2 - p1 - 1)),
+            Crypto::decrypt(line.substr(p2 + 1))));
   }
 
   return entries;
@@ -331,9 +332,9 @@ void addPassword(string currentUser)
     return;
   }
 
-  file << entry.platform << ","
-       << entry.email << ","
-       << entry.password << endl;
+  file << Crypto::encrypt(entry.platform) << ","
+       << Crypto::encrypt(entry.email) << ","
+       << Crypto::encrypt(entry.password) << endl;
 
   file.close();
 
