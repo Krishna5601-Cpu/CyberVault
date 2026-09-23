@@ -319,8 +319,33 @@ void addPassword(string currentUser)
   cout << "Email: ";
   getline(cin, email);
 
-  cout << "Password: ";
-  getline(cin, password);
+  // Ask if user wants to generate a password automatically
+  char choice;
+  cout << "Generate password automatically? (y/n): ";
+  cin >> choice;
+  cin.ignore(numeric_limits<streamsize>::max(), '\n'); // clear leftover newline
+
+  if (choice == 'y' || choice == 'Y')
+  {
+    int length;
+    cout << "Enter password length: ";
+    cin >> length;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    if (length <= 0)
+    {
+      cout << "Invalid length. Using default length of 16.\n";
+      length = 16;
+    }
+
+    password = PasswordGenerator::generate(length);
+    cout << "Generated Password: " << password << "\n";
+  }
+  else
+  {
+    cout << "Password: ";
+    getline(cin, password);
+  }
 
   PasswordEntry entry(platform, email, password);
 
