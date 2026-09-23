@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include "utils/Crypto.h"
+#include <random>
+
 using namespace std;
 
 class User
@@ -61,6 +63,7 @@ void addNote(string currentUser);
 void viewNotes(string currentUser);
 void deleteNote(string currentUser);
 vector<NoteEntry> loadNotes(string currentUser);
+void passwordGeneratorMenu();
 
 int main()
 {
@@ -234,7 +237,8 @@ void vaultMenu(string currentUser)
     cout << "1. Password Manager\n";
     cout << "2. Secure Notes\n";
     cout << "3. API Keys\n";
-    cout << "4. Logout\n";
+    cout << "4. Password Generator\n";
+    cout << "5. Logout\n";
     cout << "Choose: ";
 
     cin >> choice;
@@ -254,7 +258,10 @@ void vaultMenu(string currentUser)
       break;
 
     case 4:
-      cout << "\nLogged out successfully.\n";
+      passwordGeneratorMenu();
+      break;
+
+    case 5:
       return;
 
     default:
@@ -601,3 +608,21 @@ void deleteNote(string currentUser)
     cout << "Title not found.\n";
 };
 
+void passwordGeneratorMenu()
+{
+  int length;
+
+  cout << "\nPassword Length (8-32): ";
+  cin >> length;
+
+  if (length < 8 || length > 32)
+  {
+    cout << "Invalid length!\n";
+    return;
+  }
+
+  string password = PasswordGenerator::generate(length);
+
+  cout << "\nGenerated Password:\n";
+  cout << password << endl;
+};
