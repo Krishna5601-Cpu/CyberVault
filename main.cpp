@@ -33,31 +33,18 @@ public:
   }
 };
 
-vector<PasswordEntry> loadVault(string currentUser)
+class NoteEntry
 {
-  vector<PasswordEntry> entries;
+public:
+  string title;
+  string content;
 
-  ifstream file("data/" + currentUser + ".vault");
-
-  string line;
-
-  while (getline(file, line))
+  NoteEntry(string t, string c)
   {
-    size_t p1 = line.find(',');
-    size_t p2 = line.find(',', p1 + 1);
-
-    if (p1 == string::npos || p2 == string::npos)
-      continue;
-
-    entries.push_back(
-        PasswordEntry(
-            Crypto::decrypt(line.substr(0, p1)),
-            Crypto::decrypt(line.substr(p1 + 1, p2 - p1 - 1)),
-            Crypto::decrypt(line.substr(p2 + 1))));
+    title = t;
+    content = c;
   }
-
-  return entries;
-}
+};
 
 // Forward declaration
 bool registerUser();
@@ -68,6 +55,12 @@ void addPassword(string currentUser);
 void viewPasswords(string currentUser);
 void searchPassword(string currentUser);
 void deletePassword(string currentUser);
+vector<PasswordEntry> loadVault(string currentUser);
+void notesMenu(string currentUser);
+void addNote(string currentUser);
+void viewNotes(string currentUser);
+void deleteNote(string currentUser);
+vector<NoteEntry> loadNotes(string currentUser);
 
 int main()
 {
@@ -253,7 +246,7 @@ void vaultMenu(string currentUser)
       break;
 
     case 2:
-      cout << "\n[ Secure Notes coming soon ]\n";
+      notesMenu(currentUser);
       break;
 
     case 3:
@@ -440,3 +433,171 @@ void deletePassword(string currentUser)
   else
     cout << "Platform not found.\n";
 };
+
+vector<PasswordEntry> loadVault(string currentUser)
+{
+  vector<PasswordEntry> entries;
+
+  ifstream file("data/" + currentUser + ".vault");
+
+  string line;
+
+  while (getline(file, line))
+  {
+    size_t p1 = line.find(',');
+    size_t p2 = line.find(',', p1 + 1);
+
+    if (p1 == string::npos || p2 == string::npos)
+      continue;
+
+    entries.push_back(
+        PasswordEntry(
+            Crypto::decrypt(line.substr(0, p1)),
+            Crypto::decrypt(line.substr(p1 + 1, p2 - p1 - 1)),
+            Crypto::decrypt(line.substr(p2 + 1))));
+  }
+
+  return entries;
+};
+
+void notesMenu(string currentUser)
+{
+  int choice;
+
+  while (true)
+  {
+    cout << "\n------ Secure Notes ------\n";
+    cout << "1. Add Note\n";
+    cout << "2. View Notes\n";
+    cout << "3. Delete Note\n";
+    cout << "4. Back\n";
+    cout << "Choose: ";
+
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+      addNote(currentUser);
+      break;
+    case 2:
+      viewNotes(currentUser);
+      break;
+    case 3:
+      deleteNote(currentUser);
+      break;
+    case 4:
+      return;
+    default:
+      cout << "Invalid choice!\n";
+    }
+  }
+};
+
+void addNote(string currentUser)
+{
+  string title, content;
+
+  cout << "\nTitle: ";
+  cin >> ws;
+  getline(cin, title);
+
+  cout << "Content: ";
+  getline(cin, content);
+
+  ofstream file("data/" + currentUser + ".notes", ios::app);
+
+  file << Crypto::encrypt(title) << "|"
+       << Crypto::encrypt(content)
+       << endl;
+
+  cout << "Note saved successfully!\n";
+};
+
+vector<NoteEntry> loadNotes(string currentUser)
+{
+  vector<NoteEntry> notes;
+
+  ifstream file("data/" + currentUser + ".notes");
+
+  string line;
+
+  while (getline(file, line))
+  {
+    size_t pos = line.find('|');
+
+    if (pos == string::npos)
+      continue;
+
+    notes.push_back(
+        NoteEntry(
+            Crypto::decrypt(line.substr(0, pos)),
+            Crypto::decrypt(line.substr(pos + 1))));
+  }
+
+  return notes;
+};
+
+void viewNotes(string currentUser)
+{
+  vector<NoteEntry> notes = loadNotes(currentUser);
+
+  if (notes.empty())
+  {
+    cout << "No notes found.\n";
+    return;
+  }
+
+  cout << "\n======= Notes =======\n";
+
+  int i = 1;
+
+  for (auto note : notes)
+  {
+    cout << i++ << ". " << note.title << endl;
+    cout << note.content << endl;
+    cout << "---------------------\n";
+  }
+};
+
+void deleteNote(string currentUser)
+{
+  vector<NoteEntry> notes = loadNotes(currentUser);
+
+  string title;
+
+  cout << "\nEnter title to delete: ";
+  cin >> ws;
+  getline(cin, title);
+
+  vector<NoteEntry> updated;
+
+  bool deleted = false;
+
+  for (auto note : notes)
+  {
+    if (note.title == title && !deleted)
+    {
+      deleted = true;
+      continue;
+    }
+
+    updated.push_back(note);
+  }
+
+  ofstream file("data/" + currentUser + ".notes");
+
+  for (auto note : updated)
+  {
+    file << Crypto::encrypt(note.title)
+         << "|"
+         << Crypto::encrypt(note.content)
+         << endl;
+  }
+
+  if (deleted)
+    cout << "Note deleted successfully!\n";
+  else
+    cout << "Title not found.\n";
+};
+
