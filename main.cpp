@@ -5,36 +5,10 @@
 #include "utils/Crypto.h"
 #include <random>
 #include "models/User.h"
+#include "models/PasswordEntry.h"
+#include "models/NoteEntry.h"
 
 using namespace std;
-
-class PasswordEntry
-{
-public:
-  string platform;
-  string email;
-  string password;
-
-  PasswordEntry(string p, string e, string pass)
-  {
-    platform = p;
-    email = e;
-    password = pass;
-  }
-};
-
-class NoteEntry
-{
-public:
-  string title;
-  string content;
-
-  NoteEntry(string t, string c)
-  {
-    title = t;
-    content = c;
-  }
-};
 
 // Forward declaration
 bool registerUser();
