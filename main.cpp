@@ -4,21 +4,9 @@
 #include <vector>
 #include "utils/Crypto.h"
 #include <random>
+#include "models/User.h"
 
 using namespace std;
-
-class User
-{
-public:
-  string username;
-  string password;
-
-  User(string u, string p)
-  {
-    username = u;
-    password = p;
-  }
-};
 
 class PasswordEntry
 {
