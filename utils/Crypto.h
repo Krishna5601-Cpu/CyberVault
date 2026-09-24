@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <random>
 using namespace std;
 
 class Crypto
