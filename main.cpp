@@ -412,18 +412,20 @@ void searchPassword(string currentUser)
 
   cout << "\n========== Results ==========\n";
 
+  cout << "\n========== Results ==========\n\n";
+
   for (auto entry : entries)
   {
     if (entry.platform.find(keyword) != string::npos)
     {
-      cout << "Platform : " << entry.platform << endl;
-      cout << "Email    : " << entry.email << endl;
-      cout << "Password : " << entry.password << endl;
+      cout << "🌐 " << entry.platform << endl;
+      cout << "📧 " << entry.email << endl;
+      cout << "🔑 " << entry.password << endl;
       cout << "----------------------------\n";
 
       found = true;
     }
-  }
+  };
 
   if (!found)
   {
