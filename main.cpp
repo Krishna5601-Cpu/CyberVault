@@ -402,28 +402,33 @@ void searchPassword(string currentUser)
 {
   vector<PasswordEntry> entries = loadVault(currentUser);
 
-  string platform;
+  string keyword;
 
-  cout << "\nSearch platform: ";
+  cout << "\nSearch: ";
   cin >> ws;
-  getline(cin, platform);
+  getline(cin, keyword);
 
   bool found = false;
 
+  cout << "\n========== Results ==========\n";
+
   for (auto entry : entries)
   {
-    if (entry.platform == platform)
+    if (entry.platform.find(keyword) != string::npos)
     {
-      cout << "\nPlatform : " << entry.platform << endl;
+      cout << "Platform : " << entry.platform << endl;
       cout << "Email    : " << entry.email << endl;
       cout << "Password : " << entry.password << endl;
+      cout << "----------------------------\n";
 
       found = true;
     }
   }
 
   if (!found)
-    cout << "No password found.\n";
+  {
+    cout << "No matching passwords found.\n";
+  }
 };
 
 void deletePassword(string currentUser)
