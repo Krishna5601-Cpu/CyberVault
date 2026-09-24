@@ -7,6 +7,7 @@
 #include "models/User.h"
 #include "models/PasswordEntry.h"
 #include "models/NoteEntry.h"
+#include "utils/PasswordGenerator.h"
 
 using namespace std;
 
