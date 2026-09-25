@@ -8,12 +8,11 @@
 #include "models/PasswordEntry.h"
 #include "models/NoteEntry.h"
 #include "utils/PasswordGenerator.h"
+#include "services/AuthService.h"
 
 using namespace std;
 
 // Forward declaration
-bool registerUser();
-bool loginUser(string &currentUser);
 void vaultMenu(string currentUser);
 void passwordMenu(string currentUser);
 void addPassword(string currentUser);
@@ -51,7 +50,7 @@ int main()
     {
       string currentUser;
 
-      if (loginUser(currentUser))
+      if (AuthService::loginUser(currentUser))
       {
         cout << "\nWelcome " << currentUser << "!\n";
         vaultMenu(currentUser);
@@ -64,7 +63,7 @@ int main()
       break;
     }
     case 2:
-      if (registerUser())
+      if (AuthService::registerUser())
         cout << "\n[ Registration successful! ]\n";
       else
         cout << "\n[ Username already taken! ]\n";
@@ -85,108 +84,6 @@ int main()
     }
   }
 }
-
-bool registerUser()
-{
-  string username, password;
-
-  cout << "\n--- Register ---\n";
-  cout << "Username: ";
-  cin >> username;
-  cout << "Password: ";
-  cin >> password;
-
-  // 1. Open accounts.txt for reading
-  ifstream file("data/accounts.txt");
-  string line;
-
-  // 2. Read every line
-  while (getline(file, line))
-  {
-    // Skip empty lines
-    if (line.empty())
-      continue;
-
-    // 3. Split line by comma
-    size_t pos = line.find(',');
-    if (pos == string::npos)
-      continue; // malformed line, skip
-
-    string existingUser = line.substr(0, pos);
-
-    // 4. If username already exists → return false
-    if (existingUser == username)
-    {
-      file.close();
-      return false;
-    }
-  }
-  file.close();
-
-  // 5. Append new user to accounts.txt
-  ofstream out("data/accounts.txt", ios::app);
-
-  if (!out)
-  {
-    cout << "Unable to create account database.\n";
-    return false;
-  }
-  User newUser(username, password);
-
-  out << newUser.username << "," << newUser.password << endl;
-  out.close();
-
-  // 6. Create an empty vault file for this user
-  ofstream vault("data/" + username + ".vault");
-  vault.close();
-
-  // 7. Return true
-  return true;
-};
-
-bool loginUser(string &currentUser)
-{
-  string username, password;
-
-  cout << "\n--- Login ---\n";
-  cout << "Username: ";
-  cin >> username;
-
-  cout << "Password: ";
-  cin >> password;
-
-  ifstream file("data/accounts.txt");
-
-  if (!file)
-  {
-    cout << "No accounts found.\n";
-    return false;
-  }
-
-  string line;
-
-  while (getline(file, line))
-  {
-    size_t pos = line.find(',');
-
-    if (pos == string::npos)
-      continue;
-
-    string existingUser = line.substr(0, pos);
-    string existingPass = line.substr(pos + 1);
-
-    if (existingUser == username &&
-        existingPass == password)
-    {
-      currentUser = existingUser;
-      file.close();
-      return true;
-    }
-  }
-
-  file.close();
-  return false;
-};
 
 void vaultMenu(string currentUser)
 {
