@@ -42,7 +42,7 @@ public:
   {
     ofstream file("data/" + currentUser + ".vault");
 
-    for (auto entry : entries)
+    for (const auto &entry : entries)
     {
       file << Crypto::encrypt(entry.platform) << ","
            << Crypto::encrypt(entry.email) << ","
