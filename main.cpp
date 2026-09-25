@@ -9,6 +9,7 @@
 #include "models/NoteEntry.h"
 #include "utils/PasswordGenerator.h"
 #include "services/AuthService.h"
+#include "services/VaultService.h"
 
 using namespace std;
 
@@ -19,7 +20,6 @@ void addPassword(string currentUser);
 void viewPasswords(string currentUser);
 void searchPassword(string currentUser);
 void deletePassword(string currentUser);
-vector<PasswordEntry> loadVault(string currentUser);
 void notesMenu(string currentUser);
 void addNote(string currentUser);
 void viewNotes(string currentUser);
@@ -260,7 +260,8 @@ void viewPasswords(string currentUser)
 
 void searchPassword(string currentUser)
 {
-  vector<PasswordEntry> entries = loadVault(currentUser);
+  vector<PasswordEntry> entries =
+      VaultService::load(currentUser);
 
   string keyword;
 
@@ -295,7 +296,8 @@ void searchPassword(string currentUser)
 
 void deletePassword(string currentUser)
 {
-  vector<PasswordEntry> entries = loadVault(currentUser);
+  vector<PasswordEntry> entries =
+      VaultService::load(currentUser);
 
   string platform;
 
@@ -318,45 +320,12 @@ void deletePassword(string currentUser)
     updated.push_back(entry);
   }
 
-  ofstream file("data/" + currentUser + ".vault");
-
-  for (auto entry : updated)
-  {
-    file << entry.platform << ","
-         << entry.email << ","
-         << entry.password << endl;
-  }
+  VaultService::save(currentUser, updated);
 
   if (deleted)
     cout << "Password deleted successfully!\n";
   else
     cout << "Platform not found.\n";
-};
-
-vector<PasswordEntry> loadVault(string currentUser)
-{
-  vector<PasswordEntry> entries;
-
-  ifstream file("data/" + currentUser + ".vault");
-
-  string line;
-
-  while (getline(file, line))
-  {
-    size_t p1 = line.find(',');
-    size_t p2 = line.find(',', p1 + 1);
-
-    if (p1 == string::npos || p2 == string::npos)
-      continue;
-
-    entries.push_back(
-        PasswordEntry(
-            Crypto::decrypt(line.substr(0, p1)),
-            Crypto::decrypt(line.substr(p1 + 1, p2 - p1 - 1)),
-            Crypto::decrypt(line.substr(p2 + 1))));
-  }
-
-  return entries;
 };
 
 void notesMenu(string currentUser)
