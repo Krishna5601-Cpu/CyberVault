@@ -10,6 +10,9 @@
 #include "utils/PasswordGenerator.h"
 #include "services/AuthService.h"
 #include "services/VaultService.h"
+#include "utils/Colors.h"
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -26,21 +29,34 @@ void viewNotes(string currentUser);
 void deleteNote(string currentUser);
 vector<NoteEntry> loadNotes(string currentUser);
 void passwordGeneratorMenu();
+void loadingScreen();
 
 int main()
 {
+
+  loadingScreen();
+
   int choice;
 
   while (true)
   {
-    cout << "\n=================================\n";
-    cout << "        CYBERVAULT v0.1\n";
-    cout << "=================================\n";
-    cout << "1. Login\n";
-    cout << "2. Register\n";
-    cout << "3. About\n";
-    cout << "4. Exit\n";
-    cout << "Choose: ";
+    cout << BRIGHT_CYAN;
+    cout << "============================================\n";
+    cout << "              CYBERVAULT v1.0\n";
+    cout << "============================================\n";
+    cout << RESET;
+
+    cout << GREEN << "[1] Login\n"
+         << RESET;
+    cout << BLUE << "[2] Register\n"
+         << RESET;
+    cout << MAGENTA << "[3] About\n"
+         << RESET;
+    cout << RED << "[4] Exit\n"
+         << RESET;
+
+    cout << "\n"
+         << YELLOW << "Choose: " << RESET;
 
     cin >> choice;
 
@@ -61,12 +77,16 @@ int main()
       }
 
       break;
-    }
+  
     case 2:
       if (AuthService::registerUser())
-        cout << "\n[ Registration successful! ]\n";
+        cout << BRIGHT_GREEN
+             << "✓ Registration successful!"
+             << RESET << endl;
       else
-        cout << "\n[ Username already taken! ]\n";
+        cout << BRIGHT_RED
+             << "✗ Invalid username or password"
+             << RESET << endl;
       break;
 
     case 3:
@@ -488,5 +508,49 @@ void passwordGeneratorMenu()
   cout << password << endl;
 };
 
+void loadingScreen()
+{
+  using namespace std::chrono_literals;
 
+  cout << CYAN << BOLD;
+  cout << R"(
 
+   ██████╗██╗   ██╗██████╗ ███████╗██████╗
+  ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
+  ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝
+  ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗
+  ╚██████╗   ██║   ██████╔╝███████╗██║  ██║
+   ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝
+
+              CYBERVAULT
+        Secure Local Password Vault
+
+)";
+
+  cout << RESET;
+
+  cout << YELLOW << "Initializing Crypto Engine";
+  for (int i = 0; i < 3; i++)
+  {
+    cout << ".";
+    cout.flush();
+    std::this_thread::sleep_for(300ms);
+  }
+
+  cout << GREEN << " ✓\n";
+
+  cout << YELLOW << "Loading User Database";
+  for (int i = 0; i < 3; i++)
+  {
+    cout << ".";
+    cout.flush();
+    std::this_thread::sleep_for(300ms);
+  }
+
+  cout << GREEN << " ✓\n";
+
+  cout << BRIGHT_GREEN << "\nWelcome to CyberVault!\n\n"
+       << RESET;
+
+  std::this_thread::sleep_for(600ms);
+}
