@@ -13,6 +13,7 @@
 #include "utils/Colors.h"
 #include <thread>
 #include <chrono>
+#include <limits>
 
 using namespace std;
 
@@ -58,7 +59,13 @@ int main()
     cout << "\n"
          << YELLOW << "Choose: " << RESET;
 
-    cin >> choice;
+    if (!(cin >> choice))
+    {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << "\nInvalid choice!\n";
+      continue;
+    }
 
     switch (choice)
     {
@@ -77,7 +84,8 @@ int main()
       }
 
       break;
-  
+    }
+
     case 2:
       if (AuthService::registerUser())
         cout << BRIGHT_GREEN
@@ -248,34 +256,23 @@ void addPassword(string currentUser)
 
 void viewPasswords(string currentUser)
 {
-  ifstream file("data/" + currentUser + ".vault");
+  vector<PasswordEntry> entries = VaultService::load(currentUser);
 
-  if (!file)
+  if (entries.empty())
   {
-    cout << "Vault not found.\n";
+    cout << "\nVault empty or file not found.\n";
     return;
   }
 
-  string line;
-
   cout << "\n======= Saved Passwords =======\n";
 
-  while (getline(file, line))
+  for (auto entry : entries)
   {
-    size_t p1 = line.find(',');
-    size_t p2 = line.find(',', p1 + 1);
-
-    string platform = line.substr(0, p1);
-    string email = line.substr(p1 + 1, p2 - p1 - 1);
-    string password = line.substr(p2 + 1);
-
-    cout << "Platform : " << platform << endl;
-    cout << "Email    : " << email << endl;
-    cout << "Password : " << password << endl;
+    cout << "Platform : " << entry.platform << endl;
+    cout << "Email    : " << entry.email << endl;
+    cout << "Password : " << entry.password << endl;
     cout << "-----------------------------\n";
   }
-
-  file.close();
 };
 
 void searchPassword(string currentUser)
@@ -290,8 +287,6 @@ void searchPassword(string currentUser)
   getline(cin, keyword);
 
   bool found = false;
-
-  cout << "\n========== Results ==========\n";
 
   cout << "\n========== Results ==========\n\n";
 
@@ -515,15 +510,15 @@ void loadingScreen()
   cout << CYAN << BOLD;
   cout << R"(
 
-   ██████╗██╗   ██╗██████╗ ███████╗██████╗
-  ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
-  ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝
-  ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗
-  ╚██████╗   ██║   ██████╔╝███████╗██║  ██║
-   ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝
+    ██████╗██╗   ██╗██████╗ ███████╗██████╗
+   ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
+   ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝
+   ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗
+   ╚██████╗   ██║   ██████╔╝███████╗██║  ██║
+    ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝
 
               CYBERVAULT
-        Secure Local Password Vault
+       Secure Local Password Vault
 
 )";
 
