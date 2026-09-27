@@ -548,4 +548,4 @@ void loadingScreen()
        << RESET;
 
   std::this_thread::sleep_for(600ms);
-}
+};
