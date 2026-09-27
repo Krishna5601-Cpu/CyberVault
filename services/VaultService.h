@@ -50,4 +50,9 @@ public:
            << endl;
     }
   }
+
+  static int count(string currentUser)
+  {
+    return load(currentUser).size();
+  }
 };
