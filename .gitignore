@@ -2,4 +2,4 @@
 .vscode
 *.vault
 *.txt
-data/accounts.txt
+*data/accounts.txt
