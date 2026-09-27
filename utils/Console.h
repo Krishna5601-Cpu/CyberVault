@@ -1,6 +1,12 @@
 #pragma once
 
 #ifdef _WIN32
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 inline void enableANSI()
@@ -11,12 +17,16 @@ inline void enableANSI()
     return;
 
   DWORD mode = 0;
-  GetConsoleMode(hOut, &mode);
 
-  mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-  SetConsoleMode(hOut, mode);
+  if (!GetConsoleMode(hOut, &mode))
+    return;
+
+  SetConsoleMode(hOut,
+                 mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
-#else
-inline void enableANSI() {}
-#endif
 
+#else
+
+inline void enableANSI() {}
+
+#endif

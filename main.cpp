@@ -16,7 +16,11 @@
 #include <limits>
 #include "utils/Console.h"
 
-using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
 
 // Forward declaration
 void vaultMenu(string currentUser);
@@ -35,8 +39,8 @@ void loadingScreen();
 
 int main()
 {
-  
-  enableANSI(); 
+
+  enableANSI();
 
   loadingScreen();
 
