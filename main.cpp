@@ -113,22 +113,39 @@ int main()
   }
 }
 
+#include "services/VaultService.h"
+#include "services/NoteService.h"
+
 void vaultMenu(string currentUser)
 {
   int choice;
 
   while (true)
   {
-    cout << "\n=================================\n";
-    cout << "      " << currentUser << "'s Vault\n";
-    cout << "=================================\n";
-    cout << "1. Password Manager\n";
-    cout << "2. Secure Notes\n";
-    cout << "3. API Keys\n";
-    cout << "4. Password Generator\n";
-    cout << "5. Logout\n";
-    cout << "Choose: ";
+    system("cls");
 
+    int totalPasswords = VaultService::count(currentUser);
+    int totalNotes = NoteService::count(currentUser);
+
+    cout << CYAN << BOLD;
+    cout << "=========================================\n";
+    cout << "         " << currentUser << "'s CyberVault\n";
+    cout << "=========================================\n";
+    cout << RESET;
+
+    cout << GREEN << "Passwords : " << totalPasswords << RESET << endl;
+    cout << MAGENTA << "Notes     : " << totalNotes << RESET << endl;
+    cout << BLUE << "API Keys  : Coming Soon" << RESET << endl;
+
+    cout << "\n-----------------------------------------\n";
+
+    cout << "[1] Password Manager\n";
+    cout << "[2] Secure Notes\n";
+    cout << "[3] API Keys\n";
+    cout << "[4] Password Generator\n";
+    cout << "[5] Logout\n";
+
+    cout << "\nChoose: ";
     cin >> choice;
 
     switch (choice)
@@ -136,28 +153,22 @@ void vaultMenu(string currentUser)
     case 1:
       passwordMenu(currentUser);
       break;
-
     case 2:
       notesMenu(currentUser);
       break;
-
     case 3:
-      cout << "\n[ API Keys coming soon ]\n";
+      cout << "Coming Soon!\n";
       break;
-
     case 4:
       passwordGeneratorMenu();
       break;
-
     case 5:
       return;
-
     default:
-      cout << "\nInvalid choice!\n";
+      cout << "Invalid Option!\n";
     }
   }
-};
-
+}
 void passwordMenu(string currentUser)
 {
   int choice;
