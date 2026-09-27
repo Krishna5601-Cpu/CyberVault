@@ -14,6 +14,7 @@
 #include <thread>
 #include <chrono>
 #include <limits>
+#include "utils/Console.h"
 
 using namespace std;
 
@@ -34,6 +35,8 @@ void loadingScreen();
 
 int main()
 {
+  
+  enableANSI(); 
 
   loadingScreen();
 
