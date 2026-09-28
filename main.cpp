@@ -15,6 +15,8 @@
 #include <chrono>
 #include <limits>
 #include "utils/Console.h"
+#include <models\ApiKeyEntry.h>
+#include <services\ApiKeyService.h>
 
 using std::cin;
 using std::cout;
@@ -36,6 +38,7 @@ void deleteNote(string currentUser);
 vector<NoteEntry> loadNotes(string currentUser);
 void passwordGeneratorMenu();
 void loadingScreen();
+void apiKeyMenu(string currentUser);
 
 int main()
 {
@@ -164,7 +167,7 @@ void vaultMenu(string currentUser)
       notesMenu(currentUser);
       break;
     case 3:
-      cout << "Coming Soon!\n";
+      apiKeyMenu(currentUser);
       break;
     case 4:
       passwordGeneratorMenu();
@@ -567,3 +570,39 @@ void loadingScreen()
 
   std::this_thread::sleep_for(600ms);
 };
+
+void apiKeyMenu(string currentUser)
+{
+  int choice;
+
+  while (true)
+  {
+    cout << "\n====== API Keys ======\n";
+    cout << "1. Add Key\n";
+    cout << "2. View Keys\n";
+    cout << "3. Search\n";
+    cout << "4. Delete\n";
+    cout << "5. Back\n";
+    cout << "Choose: ";
+
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+      addApiKey(currentUser);
+      break;
+    case 2:
+      viewApiKeys(currentUser);
+      break;
+    case 3:
+      searchApiKey(currentUser);
+      break;
+    case 4:
+      deleteApiKey(currentUser);
+      break;
+    case 5:
+      return;
+    }
+  }
+}
