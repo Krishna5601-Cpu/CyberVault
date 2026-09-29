@@ -693,3 +693,36 @@ void searchApiKey(string currentUser)
     cout << "No matching API keys found.\n";
   }
 };
+
+void deleteApiKey(string currentUser)
+{
+  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+
+  string service;
+
+  cout << "\nEnter service to delete: ";
+  cin >> ws;
+  getline(cin, service);
+
+  vector<ApiKeyEntry> updated;
+
+  bool deleted = false;
+
+  for (auto key : keys)
+  {
+    if (key.service == service && !deleted)
+    {
+      deleted = true;
+      continue;
+    }
+
+    updated.push_back(key);
+  }
+
+  ApiKeyService::save(currentUser, updated);
+
+  if (deleted)
+    cout << "API Key deleted successfully!\n";
+  else
+    cout << "Service not found.\n";
+};
