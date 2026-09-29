@@ -626,21 +626,13 @@ void addApiKey(string currentUser)
 
   ApiKeyEntry entry(service, key);
 
-  ofstream file("data/" + currentUser + ".keys", ios::app);
+  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+  keys.push_back(entry);
 
-  if (!file)
-  {
-    cout << "Unable to open API key store.\n";
-    return;
-  }
-
-  file << Crypto::encrypt(entry.service) << "|"
-       << Crypto::encrypt(entry.key) << endl;
-
-  file.close();
+  ApiKeyService::save(currentUser, keys);
 
   cout << "\nAPI Key saved successfully!\n";
-};
+}
 
 void viewApiKeys(string currentUser)
 {
@@ -654,7 +646,7 @@ void viewApiKeys(string currentUser)
 
   cout << "\n======= Saved API Keys =======\n";
 
-  for (auto key : keys)
+  for (const auto &key : keys)
   {
     cout << "Service : " << key.service << endl;
     cout << "Key     : " << key.key << endl;
