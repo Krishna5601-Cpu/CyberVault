@@ -39,6 +39,10 @@ vector<NoteEntry> loadNotes(string currentUser);
 void passwordGeneratorMenu();
 void loadingScreen();
 void apiKeyMenu(string currentUser);
+void addApiKey(string currentUser);
+void viewApiKeys(string currentUser);
+void searchApiKey(string currentUser);
+void deleteApiKey(string currentUser);
 
 int main()
 {
@@ -145,7 +149,9 @@ void vaultMenu(string currentUser)
 
     cout << GREEN << "Passwords : " << totalPasswords << RESET << endl;
     cout << MAGENTA << "Notes     : " << totalNotes << RESET << endl;
-    cout << BLUE << "API Keys  : Coming Soon" << RESET << endl;
+
+    int totalKeys = ApiKeyService::count(currentUser);
+    cout << BLUE << "API Keys  : " << totalKeys << RESET << endl;
 
     cout << "\n-----------------------------------------\n";
 
@@ -605,4 +611,33 @@ void apiKeyMenu(string currentUser)
       return;
     }
   }
-}
+};
+
+void addApiKey(string currentUser)
+{
+  string service, key;
+
+  cout << "\nService: ";
+  cin >> ws;
+  getline(cin, service);
+
+  cout << "API Key: ";
+  getline(cin, key);
+
+  ApiKeyEntry entry(service, key);
+
+  ofstream file("data/" + currentUser + ".keys", ios::app);
+
+  if (!file)
+  {
+    cout << "Unable to open API key store.\n";
+    return;
+  }
+
+  file << Crypto::encrypt(entry.service) << "|"
+       << Crypto::encrypt(entry.key) << endl;
+
+  file.close();
+
+  cout << "\nAPI Key saved successfully!\n";
+};
