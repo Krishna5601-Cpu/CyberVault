@@ -641,3 +641,24 @@ void addApiKey(string currentUser)
 
   cout << "\nAPI Key saved successfully!\n";
 };
+
+void viewApiKeys(string currentUser)
+{
+  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+
+  if (keys.empty())
+  {
+    cout << "\nNo API keys found.\n";
+    return;
+  }
+
+  cout << "\n======= Saved API Keys =======\n";
+
+  for (auto key : keys)
+  {
+    cout << "Service : " << key.service << endl;
+    cout << "Key     : " << key.key << endl;
+    cout << "-----------------------------\n";
+  }
+}
+
