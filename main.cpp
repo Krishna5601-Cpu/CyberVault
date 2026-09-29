@@ -662,3 +662,34 @@ void viewApiKeys(string currentUser)
   }
 }
 
+void searchApiKey(string currentUser)
+{
+  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+
+  string keyword;
+
+  cout << "\nSearch: ";
+  cin >> ws;
+  getline(cin, keyword);
+
+  bool found = false;
+
+  cout << "\n========== Results ==========\n\n";
+
+  for (auto key : keys)
+  {
+    if (key.service.find(keyword) != string::npos)
+    {
+      cout << "🔐 " << key.service << endl;
+      cout << "🔑 " << key.key << endl;
+      cout << "----------------------------\n";
+
+      found = true;
+    }
+  }
+
+  if (!found)
+  {
+    cout << "No matching API keys found.\n";
+  }
+};
