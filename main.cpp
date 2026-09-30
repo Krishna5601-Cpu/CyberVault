@@ -43,6 +43,7 @@ void addApiKey(string currentUser);
 void viewApiKeys(string currentUser);
 void searchApiKey(string currentUser);
 void deleteApiKey(string currentUser);
+string maskApiKey(string key);
 
 int main()
 {
@@ -649,7 +650,7 @@ void viewApiKeys(string currentUser)
   for (const auto &key : keys)
   {
     cout << "Service : " << key.service << endl;
-    cout << "Key     : " << key.key << endl;
+    cout << "Key     : " << maskApiKey(key.key) << endl;
     cout << "-----------------------------\n";
   }
 }
