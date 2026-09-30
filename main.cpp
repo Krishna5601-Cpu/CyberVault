@@ -44,6 +44,7 @@ void viewApiKeys(string currentUser);
 void searchApiKey(string currentUser);
 void deleteApiKey(string currentUser);
 string maskApiKey(string key);
+void revealApiKey(string currentUser);
 
 int main()
 {
@@ -718,4 +719,40 @@ void deleteApiKey(string currentUser)
     cout << "API Key deleted successfully!\n";
   else
     cout << "Service not found.\n";
+};
+
+void revealApiKey(string currentUser)
+{
+  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+
+  if (keys.empty())
+  {
+    cout << "\nNo API keys found.\n";
+    return;
+  }
+
+  string service;
+
+  cout << "\nEnter service to reveal: ";
+  cin >> ws;
+  getline(cin, service);
+
+  bool found = false;
+
+  for (const auto &key : keys)
+  {
+    if (key.service == service)
+    {
+      cout << "\nService : " << key.service << endl;
+      cout << "API Key : " << key.key << endl;
+
+      found = true;
+      break;
+    }
+  }
+
+  if (!found)
+  {
+    cout << "\nService not found.\n";
+  }
 };
