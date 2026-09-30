@@ -629,6 +629,7 @@ void addApiKey(string currentUser)
   ApiKeyEntry entry(service, key);
 
   vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+
   keys.push_back(entry);
 
   ApiKeyService::save(currentUser, keys);
