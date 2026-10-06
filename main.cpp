@@ -17,6 +17,8 @@
 #include "utils/Console.h"
 #include "models/ApiKeyEntry.h"
 #include "services/ApiKeyService.h"
+#include "services/VaultService.h"
+#include "services/NoteService.h"
 
 using std::cin;
 using std::cout;
@@ -128,9 +130,6 @@ int main()
     }
   }
 }
-
-#include "services/VaultService.h"
-#include "services/NoteService.h"
 
 void vaultMenu(string currentUser)
 {
@@ -610,7 +609,13 @@ void apiKeyMenu(string currentUser)
       deleteApiKey(currentUser);
       break;
     case 5:
+      revealApiKey(currentUser);
+      break;
+    case 6:
       return;
+
+    default:
+      cout << "Invalid choice!\n";
     }
   }
 };
@@ -756,4 +761,12 @@ void revealApiKey(string currentUser)
   {
     cout << "\nService not found.\n";
   }
+};
+
+string maskApiKey(string key)
+{
+  if (key.length() <= 4)
+    return string(key.length(), '*');
+
+  return string(key.length() - 4, '*') + key.substr(key.length() - 4);
 };
