@@ -19,6 +19,8 @@
 #include "services/ApiKeyService.h"
 #include "services/VaultService.h"
 #include "services/NoteService.h"
+#include "services/BackupService.h"
+
 
 using std::cin;
 using std::cout;
@@ -47,6 +49,8 @@ void searchApiKey(string currentUser);
 void deleteApiKey(string currentUser);
 string maskApiKey(string key);
 void revealApiKey(string currentUser);
+void createBackup(string currentUser);
+void backupManager(string currentUser);
 
 int main()
 {
@@ -780,3 +784,53 @@ string maskApiKey(string key)
 
   return string(key.length() - 4, '*') + key.substr(key.length() - 4);
 };
+
+void createBackup(string currentUser)
+{
+    bool success = BackupService::createBackup(currentUser);
+
+    if (success)
+    {
+        cout << "\nBackup created successfully! 💾\n";
+        cout << "Location: data/" << currentUser << ".backup\n";
+    }
+    else
+    {
+        cout << "\nFailed to create backup.\n";
+    }
+};
+
+void backupManager(string currentUser)
+{
+    int choice;
+
+    while (true)
+    {
+        cout << "\n========== BACKUP MANAGER ==========\n";
+        cout << "1. Create Backup\n";
+        cout << "2. Restore Backup\n";
+        cout << "3. Back\n";
+        cout << "====================================\n";
+
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1)
+        {
+            createBackup(currentUser);
+        }
+        else if (choice == 2)
+        {
+            cout << "\nRestore feature coming soon!\n";
+        }
+        else if (choice == 3)
+        {
+            break;
+        }
+        else
+        {
+            cout << "\nInvalid choice.\n";
+        }
+    }
+};
+
