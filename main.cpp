@@ -628,19 +628,29 @@ void addApiKey(string currentUser)
   cin >> ws;
   getline(cin, service);
 
+  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
+
+  for (const auto &existingKey : keys)
+  {
+    if (existingKey.service == service)
+    {
+      cout << "\nAn API key for this service already exists.\n";
+      cout << "Use Delete API Key first if you want to replace it.\n";
+      return;
+    }
+  }
+
   cout << "API Key: ";
   getline(cin, key);
 
   ApiKeyEntry entry(service, key);
-
-  vector<ApiKeyEntry> keys = ApiKeyService::load(currentUser);
 
   keys.push_back(entry);
 
   ApiKeyService::save(currentUser, keys);
 
   cout << "\nAPI Key saved successfully!\n";
-}
+};
 
 void viewApiKeys(string currentUser)
 {
