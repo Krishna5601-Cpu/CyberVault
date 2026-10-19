@@ -820,7 +820,23 @@ void backupManager(string currentUser)
     }
     else if (choice == 2)
     {
-      cout << "\nRestore feature coming soon!\n";
+      cout << "\nWARNING: Restore replaces current vault data.\n";
+      cout << "Continue? (1 = Yes, 0 = No): ";
+
+      int confirm;
+      cin >> confirm;
+
+      if (confirm == 1)
+      {
+        if (BackupService::restoreBackup(currentUser))
+          cout << "\nBackup restored successfully!\n";
+        else
+          cout << "\nRestore failed. Check the backup file.\n";
+      }
+      else
+      {
+        cout << "\nRestore cancelled.\n";
+      }
     }
     else if (choice == 3)
     {
